@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package common;
+
+message Params {
+  int32 wSize = 1;
+  int32 hidSize = 2;
+  int32 maxAct = 3;
+  int32 maxGen = 4;
+  int32 popSize = 5;
+  int32 hofSize = 6;
+  int32 randSeed = 7;
+  float pCross = 8;
+  float pMut = 9;
+}
+
+message Status {
+  bool ok = 1;
+}
+
+message Individual {
+  repeated double w = 1;
+}
+
+message Score {
+  int32 value = 1;
+}
+
+service Python {
+  rpc Genetic (Params) returns (Status);
+}
+
+service Cpp {
+  rpc CountScore(Individual) returns (Score);
+}

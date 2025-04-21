@@ -1,0 +1,56 @@
+#pragma once
+
+#include <QObject>
+#include <QTimer>
+
+#include "Common/structs.h"
+#include "Models/car.h"
+#include "Models/neural.h"
+#include "Models/track.h"
+
+class GameImpl : public QObject
+{
+    Q_OBJECT
+public:
+    GameImpl(QObject *parent = nullptr);
+
+signals:
+    void sigRender(Render render);
+    void sigStatus(GameStatus gameStatus);
+    void sigScore(int n, int score);
+
+public slots:
+    void slotStart();
+    void slotUpdate();
+
+    void slotAddPoint(QPointF point);
+    void slotStartCreate();
+    void slotEndCreate();
+
+    void slotSaveTrack(QString fileName);
+    void slotLoadTrack(QString fileName);
+    void slotKeyPressed(Key key);
+
+    void slotControlType(ControlType controlType);
+    void slotCountScore(int n, int steps, int hidSize, QVector<double> w);
+
+private:
+    void control();
+    void restore();
+
+private:
+    GameStatus _status = GameStatus::Empty;
+    ControlType _controlType = ControlType::Manual;
+
+    QTimer *_timer = nullptr;
+    Neural *_neural = nullptr;
+    Track *_track = nullptr;
+    Car *_car = nullptr;
+
+    QVector<Track::Segment> _segments;
+    QVector<Check> _checks;
+
+    int _score = 0;
+    int _steps = 0;
+    int _n = 0;
+};
