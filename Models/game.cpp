@@ -26,8 +26,10 @@ Game::Game(QObject *parent)
     connect(this, &Game::sigLoadTrack, gameImpl, &GameImpl::slotLoadTrack);
     connect(this, &Game::sigKeyPressed, gameImpl, &GameImpl::slotKeyPressed);
 
-    connect(this, &Game::sigControlType, gameImpl, &GameImpl::slotControlType);
+    connect(this, &Game::sigAutoControl, gameImpl, &GameImpl::slotAutoControl);
     connect(this, &Game::sigCountScore, gameImpl, &GameImpl::slotCountScore);
+    connect(this, &Game::sigSetBest, gameImpl, &GameImpl::slotSetBest);
+    connect(this, &Game::sigResetBest, gameImpl, &GameImpl::slotResetBest);
 
     gameImpl->moveToThread(gameThread);
     gameThread->start();

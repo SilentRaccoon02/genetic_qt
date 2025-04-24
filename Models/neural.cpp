@@ -1,6 +1,14 @@
 #include "neural.h"
+#include "Common/defines.h"
 
 #include <QDebug>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
+#define W QStringLiteral("w")
+#define HID_SIZE QStringLiteral("hid_size")
 
 Neural::Neural(QObject *parent)
     : QObject(parent)
@@ -86,6 +94,7 @@ void Neural::resize(int inSize, int hidSize, int outSize)
 void Neural::set(QVector<double> w)
 {
     int n = 0;
+    _w = w;
 
     _hidIn.resize(_hidSize);
 
@@ -112,10 +121,15 @@ void Neural::set(QVector<double> w)
             ++n;
         }
     }
+
+    _ready = true;
 }
 
 QVector<double> Neural::predict(QVector<double> in) const
 {
+    if (!_ready)
+        return QVector<double>();
+
     QVector<double> hid(_hidSize);
     QVector<double> out(_outSize);
 
@@ -144,4 +158,68 @@ QVector<double> Neural::predict(QVector<double> in) const
     }
 
     return out;
+}
+
+bool Neural::saveJson(QString fileName) const
+{
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "Neural: Unable to access file";
+        return false;
+    }
+
+    QJsonArray wArray;
+
+    for (auto const &value : qAsConst(_w))
+        wArray.append(value);
+
+    QJsonObject jsonObject;
+    jsonObject.insert(W, wArray);
+    jsonObject.insert(HID_SIZE, _hidSize);
+
+    QJsonDocument jsonDocument(jsonObject);
+    file.write(jsonDocument.toJson(QJsonDocument::Indented));
+
+    return true;
+}
+
+bool Neural::loadJson(QString fileName)
+{
+    QFile file(fileName);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "Neural: Unable to access file";
+        return false;
+    }
+
+    QJsonParseError parseError;
+    auto jsonDocument = QJsonDocument::fromJson(file.readAll(), &parseError);
+
+    if (parseError.error != QJsonParseError::NoError)
+    {
+        qDebug() << "Parse error:" << parseError.errorString();
+        return false;
+    }
+
+    auto jsonObject = jsonDocument.object();
+    auto wArray = jsonObject.value(W).toArray();
+    int hidSize = jsonObject.value(HID_SIZE).toInt();
+
+    QVector<double> w;
+
+    for (auto const &value : qAsConst(wArray))
+        w.append(value.isDouble());
+
+    resize(IN_SIZE, hidSize, OUT_SIZE);
+    set(w);
+
+    return true;
+}
+
+QVector<double> Neural::w() const
+{
+    return _w;
 }

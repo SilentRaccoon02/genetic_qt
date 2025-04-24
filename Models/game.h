@@ -25,6 +25,8 @@ signals:
     void sigLoadTrack(QString fileName);
     void sigKeyPressed(Key key);
 
-    void sigControlType(ControlType controlType);
-    void sigCountScore(int n, int steps, int hidSize, QVector<double> w);
+    void sigAutoControl(bool control);
+    void sigCountScore(int n, int maxAct, int hidSize, QVector<double> w);
+    void sigSetBest(int hidSize, QVector<double> w);
+    void sigResetBest();
 };

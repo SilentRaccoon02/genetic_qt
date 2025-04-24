@@ -29,18 +29,21 @@ public slots:
 
     void slotSaveTrack(QString fileName);
     void slotLoadTrack(QString fileName);
-    void slotKeyPressed(Key key);
 
-    void slotControlType(ControlType controlType);
-    void slotCountScore(int n, int steps, int hidSize, QVector<double> w);
+    void slotKeyPressed(Key key);
+    void slotAutoControl(bool control);
+    void slotCountScore(int n, int maxAct, int hidSize, QVector<double> w);
+    void slotSetBest(int hidSize, QVector<double> w);
+    void slotResetBest();
 
 private:
     void control();
     void restore();
+    void resetTimer(int msec);
 
 private:
     GameStatus _status = GameStatus::Empty;
-    ControlType _controlType = ControlType::Manual;
+    ControlType _controlType = ControlType::Auto;
 
     QTimer *_timer = nullptr;
     Neural *_neural = nullptr;
@@ -51,6 +54,6 @@ private:
     QVector<Check> _checks;
 
     int _score = 0;
-    int _steps = 0;
+    int _maxAct = 0;
     int _n = 0;
 };

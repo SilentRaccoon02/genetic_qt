@@ -10,12 +10,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import elitism
 
-
 def get_score(w):
     with grpc.insecure_channel("localhost:50052") as channel:
         stub = common_pb2_grpc.CppStub(channel)
         response = stub.CountScore(common_pb2.Individual(w=w))
-    print('score = ', response.value)
+
+    # print("first_w", w[0], " score", response.value);
+
     return response.value,
 
 
@@ -84,6 +85,12 @@ def genetic(params):
 
     maxFitnessValues, meanFitnessValues = logbook.select("max", "avg")
 
+    print('send best')
+
+    with grpc.insecure_channel("localhost:50052") as channel:
+        stub = common_pb2_grpc.CppStub(channel)
+        response = stub.SaveBest(common_pb2.Individual(w=hof[0]))
+
     with open('hof[0].json', 'w') as file:
         file.write(json.dumps((hof[0])))
 
@@ -101,6 +108,8 @@ def genetic(params):
     plt.xlabel("gen")
     plt.ylabel("max/avg")
     plt.savefig("plt.png")
+
+    print('ready')
 
 
 class PythonService(common_pb2_grpc.PythonServicer):

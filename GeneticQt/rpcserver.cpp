@@ -16,6 +16,7 @@ RpcServer::RpcServer(QObject *parent)
     connect(rpcServerThread, &QThread::finished, rpcServerThread, &QThread::deleteLater);
 
     connect(rpcServerImpl, &RpcServerImpl::sigCountScore, this, &RpcServer::sigCountScore);
+    connect(rpcServerImpl, &RpcServerImpl::sigSaveBest, this, &RpcServer::sigSaveBest);
     connect(this, &RpcServer::sigAddScore, rpcServerImpl, &RpcServerImpl::sigAddScore);
 
     rpcServerImpl->moveToThread(rpcServerThread);

@@ -32,4 +32,5 @@ service Python {
 
 service Cpp {
   rpc CountScore(Individual) returns (Score);
+  rpc SaveBest(Individual) returns (Status);
 }

@@ -38,7 +38,9 @@ void RpcServerImpl::slotStart()
     server_ = builder.BuildAndStart();
     std::cout << "Server listening" << std::endl;
 
-    new CallData(this, &service_, cq_.get());
+    (new CountScoreCallData(this, &service_, cq_.get()))->proceed(true);
+    (new SaveBestCallData(this, &service_, cq_.get()))->proceed(true);
+
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &RpcServerImpl::slotHandle);
     timer->start(0);
@@ -52,32 +54,35 @@ void RpcServerImpl::slotHandle()
 
     if (status == grpc::CompletionQueue::SHUTDOWN)
     {
-        qDebug() << "Queue::SHUTDOWN";
     }
     else if (status == grpc::CompletionQueue::GOT_EVENT)
     {
-        qDebug() << "Queue::GOT_EVENT";
         static_cast<CallData *>(tag)->proceed(true);
     }
 }
 
-CallData::CallData(RpcServerImpl *server,
-                   common::Cpp::AsyncService *service,
-                   grpc::ServerCompletionQueue *cq)
-    : _server(server)
+CallData::CallData(QObject *parent)
+    : QObject(parent)
+{
+}
+
+CountScoreCallData::CountScoreCallData(RpcServerImpl *server,
+                                       common::Cpp::AsyncService *service,
+                                       grpc::ServerCompletionQueue *cq,
+                                       QObject *parent)
+    : CallData(parent)
+    , _server(server)
     , service_(service)
     , cq_(cq)
     , responder_(&ctx_)
     , status_(CREATE)
 {
-    connect(this, &CallData::sigCountScore, _server, &RpcServerImpl::sigCountScore);
-    connect(_server, &RpcServerImpl::sigAddScore, this, &CallData::slotAddScore);
+    connect(this, &CountScoreCallData::sigCountScore, _server, &RpcServerImpl::sigCountScore);
+    connect(_server, &RpcServerImpl::sigAddScore, this, &CountScoreCallData::slotAddScore);
     _n = _server->next();
-    qDebug() << "CREATE" << _n;
-    proceed(true);
 }
 
-void CallData::proceed(bool next)
+void CountScoreCallData::proceed(bool next)
 {
     if (status_ == CREATE)
     {
@@ -87,7 +92,7 @@ void CallData::proceed(bool next)
     else if (status_ == PROCESS)
     {
         if (next)
-            new CallData(_server, service_, cq_);
+            (new CountScoreCallData(_server, service_, cq_))->proceed(next);
 
         QVector<double> w;
 
@@ -98,13 +103,12 @@ void CallData::proceed(bool next)
     }
     else
     {
-        qDebug() << "DELETE" << _n;
         CHECK_EQ(status_, FINISH);
         delete this;
     }
 }
 
-void CallData::slotAddScore(int n, int score)
+void CountScoreCallData::slotAddScore(int n, int score)
 {
     if (n != _n)
         return;
@@ -112,4 +116,48 @@ void CallData::slotAddScore(int n, int score)
     reply_.set_value(score);
     status_ = FINISH;
     responder_.Finish(reply_, grpc::Status::OK, this);
+}
+
+SaveBestCallData::SaveBestCallData(RpcServerImpl *server,
+                                   common::Cpp::AsyncService *service,
+                                   grpc::ServerCompletionQueue *cq,
+                                   QObject *parent)
+    : CallData(parent)
+    , _server(server)
+    , service_(service)
+    , cq_(cq)
+    , responder_(&ctx_)
+    , status_(CREATE)
+{
+    connect(this, &SaveBestCallData::sigSaveBest, _server, &RpcServerImpl::sigSaveBest);
+}
+
+void SaveBestCallData::proceed(bool next)
+{
+    if (status_ == CREATE)
+    {
+        status_ = PROCESS;
+        service_->RequestSaveBest(&ctx_, &request_, &responder_, cq_, cq_, this);
+    }
+    else if (status_ == PROCESS)
+    {
+        if (next)
+            (new SaveBestCallData(_server, service_, cq_))->proceed(next);
+
+        QVector<double> w;
+
+        for (auto const &value : qAsConst(request_.w()))
+            w.append(value);
+
+        emit sigSaveBest(w);
+
+        reply_.set_ok(true);
+        status_ = FINISH;
+        responder_.Finish(reply_, grpc::Status::OK, this);
+    }
+    else
+    {
+        CHECK_EQ(status_, FINISH);
+        delete this;
+    }
 }

@@ -22,6 +22,8 @@ signals:
     void sigLoadTrack(QString fileName);
     void sigField(Field field);
     void sigGenetic(Params params);
+    void sigResetBest();
+    void sigAutoControl(bool control);
 
 public slots:
     void slotGameStatus(GameStatus gameStatus);
@@ -32,6 +34,7 @@ private slots:
     void slotLoadTrack();
     void slotField();
     void slotGenetic();
+    void slotAutoControl();
 
 private:
     void addTrack();

@@ -21,11 +21,19 @@ public:
     void set(QVector<double> w);
     QVector<double> predict(QVector<double> in) const;
 
+    bool saveJson(QString fileName) const;
+    bool loadJson(QString fileName);
+
+    QVector<double> w() const;
+
 private:
+    bool _ready = false;
+
     int _inSize = 0;
     int _hidSize = 0;
     int _outSize = 0;
 
     QVector<QVector<double>> _hidIn;
     QVector<QVector<double>> _outHid;
+    QVector<double> _w;
 };

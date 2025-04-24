@@ -19,6 +19,8 @@ Controls::Controls(QWidget *parent)
     connect(_ui->checksCheck, &QCheckBox::stateChanged, this, &Controls::slotField);
     connect(_ui->navLinesCheck, &QCheckBox::stateChanged, this, &Controls::slotField);
     connect(_ui->navPointsCheck, &QCheckBox::stateChanged, this, &Controls::slotField);
+    connect(_ui->resetBest, &QPushButton::clicked, this, &Controls::sigResetBest);
+    connect(_ui->autoControlCheck, &QCheckBox::stateChanged, this, &Controls::slotAutoControl);
 
     Field field;
     _ui->checksCheck->setChecked(field.showChecks);
@@ -126,4 +128,9 @@ void Controls::slotGenetic()
     params.pMut = _ui->pMut->value();
 
     emit sigGenetic(params);
+}
+
+void Controls::slotAutoControl()
+{
+    emit sigAutoControl(_ui->autoControlCheck->isChecked());
 }

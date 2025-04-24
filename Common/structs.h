@@ -33,7 +33,6 @@ struct Render
     QVector<QPointF> carPoints;
     QVector<QPointF> carNavPoints;
     QVector<QLineF> carNavLines;
-    bool crashed;
 };
 
 struct Check

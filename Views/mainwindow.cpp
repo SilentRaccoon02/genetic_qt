@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_controls, &Controls::sigSaveTrack, this, &MainWindow::sigSaveTrack);
     connect(_controls, &Controls::sigLoadTrack, this, &MainWindow::sigLoadTrack);
     connect(_controls, &Controls::sigGenetic, this, &MainWindow::sigGenetic);
+    connect(_controls, &Controls::sigResetBest, this, &MainWindow::sigResetBest);
+    connect(_controls, &Controls::sigAutoControl, this, &MainWindow::sigAutoControl);
 
     connect(_controls, &Controls::sigField, _gameField, &GameField::slotField);
 

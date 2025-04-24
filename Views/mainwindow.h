@@ -18,6 +18,8 @@ signals:
     void sigSaveTrack(QString fileName);
     void sigLoadTrack(QString fileName);
     void sigGenetic(Params params);
+    void sigResetBest();
+    void sigAutoControl(bool control);
 
     void sigLeftClick(QPointF point);
     void sigRightClick(QPointF point);

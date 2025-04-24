@@ -16,12 +16,16 @@ public:
     ~GeneticQt();
 
 signals:
-    void sigCountScore(int n, int steps, int hidSize, QVector<double> w);
+    void sigCountScore(int n, int maxAct, int hidSize, QVector<double> w);
+    void sigSetBest(int hidSize, QVector<double> w);
+
     void sigGenetic(Params params);
     void sigAddScore(int n, int score);
 
 public slots:
     void slotCountScore(int n, QVector<double> w);
+    void slotSetBest(QVector<double> w);
+
     void slotScore(int n, int score);
     void slotGenetic(Params params);
 

@@ -12,4 +12,5 @@ public:
 signals:
     void sigCountScore(int n, QVector<double> w);
     void sigAddScore(int n, int score);
+    void sigSaveBest(QVector<double> w);
 };
