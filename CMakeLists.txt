@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
+set(QT_CREATOR_SKIP_VCPKG_SETUP ON)
 project(genetic_qt VERSION 0.1 LANGUAGES CXX)
 
 

@@ -1,4 +1,12 @@
 build/
+dist/
 CMakeLists.txt.user
+
 Deap/.venv/
 Deap/__pycache__/
+
+*pb2.py
+*pb2_grpc.py
+
+*.spec
+*.png

@@ -1,23 +1,24 @@
-import json
+# import json
+
+import grpc
 import random
+import elitism
 import common_pb2
 import common_pb2_grpc
-import grpc
-from concurrent import futures
 
-from deap import base, creator, tools
 import numpy as np
 import matplotlib.pyplot as plt
-import elitism
+
+from concurrent import futures
+from deap import base, creator, tools
+
 
 def get_score(w):
     with grpc.insecure_channel("localhost:50052") as channel:
         stub = common_pb2_grpc.CppStub(channel)
         response = stub.CountScore(common_pb2.Individual(w=w))
 
-    # print("first_w", w[0], " score", response.value);
-
-    return response.value,
+    return (response.value,)
 
 
 def genetic(params):
@@ -85,39 +86,34 @@ def genetic(params):
 
     maxFitnessValues, meanFitnessValues = logbook.select("max", "avg")
 
-    print('send best')
-
     with grpc.insecure_channel("localhost:50052") as channel:
         stub = common_pb2_grpc.CppStub(channel)
-        response = stub.SaveBest(common_pb2.Individual(w=hof[0]))
+        stub.SaveBest(common_pb2.Individual(w=hof[0]))
 
-    with open('hof[0].json', 'w') as file:
-        file.write(json.dumps((hof[0])))
+    # with open('hof[0].json', 'w') as file:
+    #     file.write(json.dumps((hof[0])))
 
-    with open('hof[1].json', 'w') as file:
-        file.write(json.dumps((hof[1])))
+    # with open('hof[1].json', 'w') as file:
+    #     file.write(json.dumps((hof[1])))
 
-    with open('population.json', 'w') as file:
-        file.write(json.dumps(population))
+    # with open('population.json', 'w') as file:
+    #     file.write(json.dumps(population))
 
-    with open('logbook.json', 'w') as file:
-        file.write(json.dumps(logbook))
+    # with open('logbook.json', 'w') as file:
+    #     file.write(json.dumps(logbook))
 
     plt.plot(maxFitnessValues, color="red")
     plt.plot(meanFitnessValues, color="green")
     plt.xlabel("gen")
     plt.ylabel("max/avg")
-    plt.savefig("plt.png")
+    plt.savefig("result.png")
 
-    print('ready')
+    print("ready")
 
 
 class PythonService(common_pb2_grpc.PythonServicer):
     def Genetic(self, request, context):
         genetic(request)
-        # with grpc.insecure_channel("localhost:50052") as channel:
-        #     stub = common_pb2_grpc.CppStub(channel)
-        #     response = stub.CountScore(common_pb2.Individual(w=[1,2,3]))
         return common_pb2.Status(ok=True)
 
 
@@ -126,7 +122,7 @@ def serve():
     common_pb2_grpc.add_PythonServicer_to_server(PythonService(), server)
     server.add_insecure_port("localhost:50051")
     server.start()
-    print("started")
+    print("Server listening")
     server.wait_for_termination()
 
 
