@@ -27,6 +27,7 @@ signals:
 
 public slots:
     void slotGameStatus(GameStatus gameStatus);
+    void slotActions(int n);
 
 private slots:
     void slotCreateTrack();

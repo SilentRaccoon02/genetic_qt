@@ -13,8 +13,8 @@
 #define MAX_SPEED 8
 #define MIN_SPEED 0
 
-#define SPEED_DELTA 0.1
-#define ROTATION_DELTA 0.1
+#define SPEED_DELTA 0.05
+#define ROTATION_DELTA 0.05
 
 Car::Car(QPointF center, float angle, QObject *parent)
     : QObject(parent)

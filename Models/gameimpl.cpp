@@ -234,6 +234,7 @@ void GameImpl::control()
 
         if (death || !_maxAct)
         {
+            _actions = 0;
             // auto w = _neural->w();
             // qDebug() << "maxAct" << _maxAct << "score" <<_score << "first_w" << w[0] << "n" <<_n;
 
@@ -276,6 +277,9 @@ void GameImpl::control()
 
     if (pred[1] == 2)
         _car->moveBack();
+
+    _actions++;
+    emit sigActions(_actions);
 }
 
 void GameImpl::restore()
@@ -283,6 +287,9 @@ void GameImpl::restore()
     _score = 0;
     _maxAct = 0;
     _n = 0;
+
+    _actions = 0;
+    emit sigActions(_actions);
 
     _segments = _track->segments(true);
     _checks = _track->checks(true);

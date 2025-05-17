@@ -23,9 +23,10 @@ def get_score(w):
 
 def genetic(params):
     print(params)
+
     LOW = -1
     UP = 1
-    ETA = 0.5
+    ETA = 10
 
     LENGTH = params.wSize
     MAX_GEN = params.maxGen
@@ -49,7 +50,7 @@ def genetic(params):
         tools.initRepeat,
         creator.Individual,
         toolbox.randomWeight,
-        LENGTH,
+        LENGTH
     )
     toolbox.register(
         "populationCreator", tools.initRepeat, list, toolbox.individualCreator
@@ -66,7 +67,7 @@ def genetic(params):
         low=LOW,
         up=UP,
         eta=ETA,
-        indpb=1.0 / LENGTH,
+        indpb=1.0 / LENGTH
     )
 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -102,6 +103,7 @@ def genetic(params):
     # with open('logbook.json', 'w') as file:
     #     file.write(json.dumps(logbook))
 
+    plt.clf()
     plt.plot(maxFitnessValues, color="red")
     plt.plot(meanFitnessValues, color="green")
     plt.xlabel("gen")

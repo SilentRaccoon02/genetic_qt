@@ -17,6 +17,7 @@ Game::Game(QObject *parent)
 
     connect(gameImpl, &GameImpl::sigRender, this, &Game::sigRender);
     connect(gameImpl, &GameImpl::sigStatus, this, &Game::sigStatus);
+    connect(gameImpl, &GameImpl::sigActions, this, &Game::sigActions);
     connect(gameImpl, &GameImpl::sigScore, this, &Game::sigScore);
 
     connect(this, &Game::sigAddPoint, gameImpl, &GameImpl::slotAddPoint);

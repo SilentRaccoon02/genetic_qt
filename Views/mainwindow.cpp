@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(_gameField, &GameField::sigKeyPressed, this, &MainWindow::sigKeyPressed);
 
     connect(this, &MainWindow::sigGameStatus, _controls, &Controls::slotGameStatus);
+    connect(this, &MainWindow::sigActions, _controls, &Controls::slotActions);
+
     connect(this, &MainWindow::sigRender, _gameField, &GameField::slotRender);
     connect(this, &MainWindow::sigGameStatus, _gameField, &GameField::slotGameStatus);
 }

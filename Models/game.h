@@ -16,6 +16,7 @@ signals:
     void sigRender(Render render);
     void sigStatus(GameStatus gameStatus);
     void sigScore(int n, int score);
+    void sigActions(int n);
 
     void sigAddPoint(QPointF point);
     void sigStartCreate();

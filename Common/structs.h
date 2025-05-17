@@ -52,6 +52,8 @@ struct Params
     int randSeed;
     float pCross;
     float pMut;
+    int genSwitch;
+    int actSwitch;
 };
 
 struct Field {

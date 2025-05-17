@@ -18,6 +18,7 @@ signals:
     void sigRender(Render render);
     void sigStatus(GameStatus gameStatus);
     void sigScore(int n, int score);
+    void sigActions(int n);
 
 public slots:
     void slotStart();
@@ -55,5 +56,6 @@ private:
 
     int _score = 0;
     int _maxAct = 0;
+    int _actions = 0;
     int _n = 0;
 };

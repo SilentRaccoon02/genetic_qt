@@ -40,6 +40,11 @@ void Controls::slotGameStatus(GameStatus trackStatus)
     _gameStatus = trackStatus;
 }
 
+void Controls::slotActions(int n)
+{
+    _ui->labelActions->setText(QString::number(n));
+}
+
 void Controls::slotCreateTrack()
 {
     if (_gameStatus == GameStatus::Busy)
@@ -126,6 +131,8 @@ void Controls::slotGenetic()
     params.randSeed = _ui->randSeed->value();
     params.pCross = _ui->pCross->value();
     params.pMut = _ui->pMut->value();
+    params.genSwitch = _ui->genSwitch->value();
+    params.actSwitch = _ui->actSwitch->value();
 
     emit sigGenetic(params);
 }

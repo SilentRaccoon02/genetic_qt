@@ -27,6 +27,7 @@ signals:
 
     void sigRender(Render render);
     void sigGameStatus(GameStatus gameStatus);
+    void sigActions(int n);
 
 private:
     Controls* _controls = nullptr;

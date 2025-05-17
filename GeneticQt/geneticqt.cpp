@@ -32,6 +32,7 @@ GeneticQt::GeneticQt(int argc, char *argv[])
     connect(_mainWindow, &MainWindow::sigAutoControl, _game, &Game::sigAutoControl);
 
     connect(_game, &Game::sigStatus, _mainWindow, &MainWindow::sigGameStatus);
+    connect(_game, &Game::sigActions, _mainWindow, &MainWindow::sigActions);
     connect(_game, &Game::sigRender, _mainWindow, &MainWindow::sigRender);
 
     connect(_mainWindow, &MainWindow::sigGenetic, this, &GeneticQt::slotGenetic);
@@ -60,7 +61,12 @@ GeneticQt::~GeneticQt()
 
 void GeneticQt::slotCountScore(int n, QVector<double> w)
 {
-    emit sigCountScore(n, _params.maxAct, _params.hidSize, w);
+    int maxAct = _params.maxAct;
+
+    if (n > _params.genSwitch * _params.popSize)
+        maxAct = _params.actSwitch;
+
+    emit sigCountScore(n, maxAct, _params.hidSize, w);
 }
 
 void GeneticQt::slotSetBest(QVector<double> w)
